@@ -10,6 +10,11 @@ import { Role } from "./role.enum";
 import { RolesGuard } from "./roles.guard";
 import { Public } from "./public.decorator";
 import { AuthGuard } from "./auth.guard";
+import { LoginDto } from "./dto/login.dto";
+import { LoginResponseDTo } from "./dto/login-response.dto";
+
+
+  
 
 @Controller('auth')
 export class AuthController {
@@ -19,17 +24,36 @@ export class AuthController {
     private readonly authService: AuthService
   ) { }
 
+
+  @Public()
   @Post('login')
-  
-  async login(@CurrentUser() user: User) {
+  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDTo> {
+    const user = await this.userRepository.findOne({
+      where: [
+        { email: loginDto.email }
+      ]
+    });
+
+    if (!user) {
+      throw new BadRequestException(['email or password is incorrect']);
+    }
+
+    if (!await this.authService.comparePasswords(loginDto.password, user.password)) {
+      throw new BadRequestException(['email or password is incorrect']);
+    }
+
+    const { password, ...result } = user;
     return {
-      userId: user.id,
+      ...result,
       token: this.authService.getTokenForUser(user)
     }
-  }
+   }
+
+
+
   @Public()
   @Post('register')
-  async register(@Body() createUserDto: CreateUserDto) {
+  async register(@Body() createUserDto: CreateUserDto): Promise<LoginResponseDTo> {
     const user = new User();
 
     if (createUserDto.password !== createUserDto.retypedPassword) {
@@ -50,13 +74,35 @@ export class AuthController {
     user.email = createUserDto.email;
     user.firstName = createUserDto.firstName;
     user.lastName = createUserDto.lastName;
+    const {password, ...result} = await this.userRepository.save(user)
 
-    return {
-      ...(await this.userRepository.save(user)),
+    return {  
+      ...result,
       token: this.authService.getTokenForUser(user)
     }
   }
 
+  // !TODO implement this
+  @Public()
+  @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: { email: string }) {
+    const user = await this.userRepository.findOne({
+      where: [
+        { email: forgotPasswordDto.email }
+      ]
+    });
+
+    if (!user) {
+      throw new BadRequestException(['email not found']);
+    }
+
+    await this.authService.sendPasswordResetEmail(user.email);
+
+    return {
+      message: 'Password reset email sent'
+    }
+      
+    }
 
   @Get('profile')
   @Roles(Role.User)
