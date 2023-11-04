@@ -3,7 +3,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthController } from "./auth.controller";
 
 import { User } from "../users/entities/user.entity";
-import { LocalStrategy } from "./local.strategy";
 import { AuthService } from "./auth.service";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "./jwt.strategy";
@@ -24,7 +23,7 @@ import { AuthGuard } from "./auth.guard";
       })
     })
   ],
-  providers: [LocalStrategy, JwtStrategy, AuthService,  {
+  providers: [JwtStrategy, AuthService,  {
     provide: APP_GUARD,
     useClass: AuthGuard,
   },{

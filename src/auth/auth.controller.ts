@@ -5,8 +5,6 @@ import { AuthService } from "./auth.service";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { AuthGuardLocal } from "./auth-guard.local";
-import { AuthGuardJwt } from "./auth-guard.jwt";
 import { Roles } from "./roles.decorator";
 import { Role } from "./role.enum";
 import { RolesGuard } from "./roles.guard";
@@ -22,7 +20,7 @@ export class AuthController {
   ) { }
 
   @Post('login')
-  @UseGuards(AuthGuardLocal)
+  
   async login(@CurrentUser() user: User) {
     return {
       userId: user.id,
