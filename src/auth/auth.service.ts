@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "src/users/entities/user.entity";
 import * as bcrypt from "bcrypt";
+import { Role } from "./role.enum";
 
 
 @Injectable()
@@ -13,7 +14,8 @@ export class AuthService {
   public getTokenForUser(user: User): string {
     return this.jwtService.sign({
       email: user.email,
-      sub: user.id
+      sub: user.id,
+      roles: Role.User
     });
   }
 

@@ -1,11 +1,17 @@
 import { BadRequestException, Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
 import { CurrentUser } from "./current-user.decorator";
 import { User } from "src/users/entities/user.entity";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "src/users/dto/create-user.dto";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { AuthGuardLocal } from "./auth-guard.local";
+import { AuthGuardJwt } from "./auth-guard.jwt";
+import { Roles } from "./roles.decorator";
+import { Role } from "./role.enum";
+import { RolesGuard } from "./roles.guard";
+import { Public } from "./public.decorator";
+import { AuthGuard } from "./auth.guard";
 
 @Controller('auth')
 export class AuthController {
@@ -16,14 +22,14 @@ export class AuthController {
   ) { }
 
   @Post('login')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(AuthGuardLocal)
   async login(@CurrentUser() user: User) {
     return {
       userId: user.id,
       token: this.authService.getTokenForUser(user)
     }
   }
-
+  @Public()
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
     const user = new User();
@@ -55,7 +61,8 @@ export class AuthController {
 
 
   @Get('profile')
-  @UseGuards(AuthGuard('jwt'))
+  @Roles(Role.User)
+  @UseGuards(AuthGuard, RolesGuard)
   async getProfile(@CurrentUser() user: User) {
     return user;
   }
