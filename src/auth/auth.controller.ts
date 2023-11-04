@@ -39,7 +39,7 @@ export class AuthController {
     });
 
     if (existingUser) {
-      throw new BadRequestException(['username or email is already taken']);
+      throw new BadRequestException(['email is already taken']);
     }
 
     user.password = await this.authService.hashPassword(createUserDto.password);
