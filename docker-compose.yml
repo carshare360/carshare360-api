@@ -18,3 +18,25 @@ services:
     restart: on-failure
     healthcheck:
       test: "PGPASSWORD=docker pg_isready -h 127.0.0.1 -U docker -d gis"
+  app:
+    build: .
+    container_name: carshare360-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - POSTGRE_HOST=db
+      - POSTGRE_PORT=${POSTGRE_PORT}
+      - POSTGRE_DATABASE=${POSTGRE_DATABASE}
+      - POSTGRE_USERNAME=${POSTGRE_USERNAME}
+      - POSTGRE_PASSWORD=${POSTGRE_PASSWORD}
+      - POSTGRE_SYNCHRONIZE=${POSTGRE_SYNCHRONIZE}
+      - POSTGRE_LOGGING=${POSTGRE_LOGGING}
+      - AUTH_SECRET=${AUTH_SECRET}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db
+    restart: on-failure
