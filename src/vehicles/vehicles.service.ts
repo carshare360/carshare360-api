@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
-
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Polygon, Repository } from 'typeorm';
 import { Vehicle } from './entities/vehicle.entity';
+import { LatLng, SearchVehicleDto } from './dto/search-vehicle.dto';
 
 @Injectable()
 export class VehicleService {
@@ -16,7 +16,10 @@ export class VehicleService {
 
   create(createCarDto: CreateVehicleDto): Promise<Vehicle> {
     const car = this.vehicleRepository.create(createCarDto);
-    car.location = { type: 'Point', coordinates: [createCarDto.longitude, createCarDto.latitude] };
+    car.location = {
+      type: 'Point',
+      coordinates: [createCarDto.longitude, createCarDto.latitude],
+    };
     return this.vehicleRepository.save(car);
   }
 
@@ -27,7 +30,7 @@ export class VehicleService {
   findOne(id: number): Promise<Vehicle> {
     return this.vehicleRepository.findOne(
       {
-        where: {
+      where: {
         id
       }
     }
@@ -47,5 +50,39 @@ export class VehicleService {
 
   async remove(id: number): Promise<void> {
     await this.vehicleRepository.delete(id);
+  }
+
+  async search(searchVehicleDto: SearchVehicleDto): Promise<Vehicle[]> {
+    const boundingBox = this.createBoundingBox(searchVehicleDto.NE, searchVehicleDto.SW);
+
+    const vehiclesInSearchArea = await this.vehicleRepository
+    .createQueryBuilder('vehicle')
+    .where(`ST_Within(vehicle.location::geometry, ST_GeomFromGeoJSON(:boundingBox)::geometry)`)
+    .setParameter('boundingBox', JSON.stringify(boundingBox))
+    .getMany();
+
+    return vehiclesInSearchArea;
+  }
+
+  private createBoundingBox(NE: LatLng, SW: LatLng): Polygon {
+    const epsilon = 0.000001;
+
+    const minX = Math.min(NE.longitude, SW.longitude) - epsilon;
+    const minY = Math.min(NE.latitude, SW.latitude) - epsilon;
+    const maxX = Math.max(NE.longitude, SW.longitude) + epsilon;
+    const maxY = Math.max(NE.latitude, SW.latitude) + epsilon;
+
+    return {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [minX, minY],
+          [minX, maxY],
+          [maxX, maxY],
+          [maxX, minY],
+          [minX, minY],
+        ],
+      ],
+    };
   }
 }
