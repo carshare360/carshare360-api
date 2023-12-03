@@ -8,10 +8,17 @@ export class CreateVehicleDto {
   ownerId: number;
 
   @ApiProperty({
-    description: 'The location ID of the vehicle',
-    example: 456,
+    description: 'The latitude of the vehicle location',
+    example: 90,
   })
-  location: number;
+  latitude: number;
+  
+  @ApiProperty({
+    description: 'The longitude of the vehicle location',
+    example: 180,
+  })
+  longitude: number;
+
 
   @ApiProperty({
     description: 'The brand of the vehicle',

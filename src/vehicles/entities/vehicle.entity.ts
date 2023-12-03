@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Point } from 'typeorm';
 
 @Entity()
 export class Vehicle {
@@ -8,8 +8,12 @@ export class Vehicle {
   @Column()
   ownerId: number;
 
-  @Column()
-  location: number;
+  @Column({
+    type: 'geography',
+    spatialFeatureType: 'Point',
+    srid: 4326,
+  })
+  location: Point;
 
   @Column()
   brand: string;

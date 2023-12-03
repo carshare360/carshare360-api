@@ -16,6 +16,7 @@ export class VehicleService {
 
   create(createCarDto: CreateVehicleDto): Promise<Vehicle> {
     const car = this.vehicleRepository.create(createCarDto);
+    car.location = { type: 'Point', coordinates: [createCarDto.longitude, createCarDto.latitude] };
     return this.vehicleRepository.save(car);
   }
 
