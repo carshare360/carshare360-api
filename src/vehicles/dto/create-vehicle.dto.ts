@@ -88,11 +88,4 @@ export class CreateVehicleDto {
     example: 'http://example.com/photo.jpg',
   })
   photo: string;
-
-  //TODO: remove this field
-  @ApiProperty({
-    description: 'Availability of the vehicle',
-    example: true,
-  })
-  isAvailable: boolean;
 }
