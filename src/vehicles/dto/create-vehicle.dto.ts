@@ -43,12 +43,14 @@ export class CreateVehicleDto {
   })
   model: string;
 
-  //TODO: convert to number
+  @IsNumber()
+  @Min(1900)
+  @Max(new Date().getFullYear() + 1)
   @ApiProperty({
     description: 'The manufacturing year of the vehicle',
     example: '2021',
   })
-  year: string;
+  year: number;
 
   @IsString()
   @Length(3, 255)
@@ -68,19 +70,21 @@ export class CreateVehicleDto {
   })
   transmissionType: string;
 
-  //TODO: convert to number
+  @IsNumber()
+  @Min(0)
   @ApiProperty({
     description: 'The mileage of the vehicle',
     example: '10000',
   })
-  mileage: string;
+  mileage: number;
 
-  //TODO: convert to number
+  @IsNumber()
+  @Min(0)
   @ApiProperty({
     description: 'The price per hour for renting the vehicle',
     example: '15',
   })
-  pricePerHour: string;
+  pricePerHour: number;
 
   @IsString()
   @ApiProperty({
