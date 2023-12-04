@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, Point, Check } from 'typeorm';
 
-@Entity()
+@Entity({name: 'vehicles'})
 export class Vehicle {
   @PrimaryGeneratedColumn()
   id: number;
@@ -8,8 +8,12 @@ export class Vehicle {
   @Column()
   ownerId: number;
 
-  @Column()
-  location: number;
+  @Column({
+    type: 'geography',
+    spatialFeatureType: 'Point',
+    srid: 4326,
+  })
+  location: Point;
 
   @Column()
   brand: string;
@@ -18,23 +22,26 @@ export class Vehicle {
   model: string;
 
   @Column()
-  year: string;
+  @Check(`"year" > 1900 AND "year" <= EXTRACT(YEAR FROM CURRENT_DATE) + 1`)
+  year: number;
 
   @Column()
   engineType: string;
 
-  @Column()
+  @Column({ type: 'enum', enum: ['Automatic', 'Manual', 'Semi-Automatic'] })
   transmissionType: string; // Enum tipi için özel bir işlem yapılabilir
 
   @Column()
-  mileage: string;
+  @Check(`"mileage" >= 0`)
+  mileage: number;
 
   @Column()
-  pricePerHour: string;
+  @Check(`"pricePerHour" >= 0`)
+  pricePerHour: number;
 
   @Column()
   photo: string;
 
-  @Column()
+  @Column({ default: true })
   isAvailable: boolean;
 }

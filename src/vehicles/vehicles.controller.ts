@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { VehicleService } from './vehicles.service';
-import { CreateVehicleDto } from './dto/create-vehicle.dto';
-import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/public.decorator';
+import { CreateVehicleDto } from './dto/create-vehicle.dto';
+import { SearchVehicleDto } from './dto/search-vehicle.dto';
+import { UpdateVehicleDto } from './dto/update-vehicle.dto';
+import { VehicleService } from './vehicles.service';
 
 @ApiTags('vehicles')
 @Controller('vehicles')
@@ -60,5 +61,14 @@ export class VehicleController {
   @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.vehicleService.remove(+id);
+  }
+
+  @Post('search')
+  @Public()
+  @ApiOperation({ summary: 'Search for vehicles' })
+  @ApiResponse({ status: 200, description: 'Vehicles found.' })
+  @HttpCode(200)
+  search(@Body() searchVehicleDto: SearchVehicleDto) {
+    return this.vehicleService.search(searchVehicleDto);
   }
 }
