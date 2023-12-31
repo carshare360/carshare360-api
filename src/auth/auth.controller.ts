@@ -57,7 +57,7 @@ export class AuthController {
     const user = new User();
 
     if (createUserDto.password !== createUserDto.retypedPassword) {
-      throw new BadRequestException(['Passwords are not identical']);
+      throw new BadRequestException({code: "passwords_not_matching"});
     }
 
     const existingUser = await this.userRepository.findOne({
@@ -67,7 +67,7 @@ export class AuthController {
     });
 
     if (existingUser) {
-      throw new BadRequestException(['email is already taken']);
+      throw new BadRequestException({code: "email_already_registered"});
     }
 
     user.password = await this.authService.hashPassword(createUserDto.password);
@@ -80,6 +80,23 @@ export class AuthController {
       ...result,
       token: this.authService.getTokenForUser(user)
     }
+  }
+
+  @Public()
+  @Post('validate-email')
+  async checkRegisteredEmail(@Body() body: { email: string }): Promise<{}> {
+    if(body.email === undefined) throw new BadRequestException({code: "invalid_email"});
+    const existingUser = await this.userRepository.findOne({
+      where: [
+        { email: body.email }
+      ]
+    });
+
+    if(existingUser)
+    {
+      throw new BadRequestException({code: "email_already_registered"})
+    }
+    return {};
   }
 
   // !TODO implement this
