@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsString, Length, Max, Min } from 'class-validator';
 
 export class CreateVehicleDto {
   @IsNumber()
+  @Type(() => Number)
   @ApiProperty({
     description: 'The owner ID of the vehicle',
     example: 123,
@@ -10,6 +12,7 @@ export class CreateVehicleDto {
   ownerId: number;
 
   @IsNumber()
+  @Type(() => Number)
   @Min(-90)
   @Max(90)
   @ApiProperty({
@@ -19,6 +22,7 @@ export class CreateVehicleDto {
   latitude: number;
 
   @IsNumber()
+  @Type(() => Number)
   @Min(-180)
   @Max(180)
   @ApiProperty({
@@ -28,6 +32,7 @@ export class CreateVehicleDto {
   longitude: number;
 
   @IsString()
+  @Type(() => String)
   @Length(3, 255)
   @ApiProperty({
     description: 'The brand of the vehicle',
@@ -36,6 +41,7 @@ export class CreateVehicleDto {
   brand: string;
 
   @IsString()
+  @Type(() => String)
   @Length(3, 255)
   @ApiProperty({
     description: 'The model of the vehicle',
@@ -44,6 +50,7 @@ export class CreateVehicleDto {
   model: string;
 
   @IsNumber()
+  @Type(() => Number)
   @Min(1900)
   @Max(new Date().getFullYear() + 1)
   @ApiProperty({
@@ -53,6 +60,7 @@ export class CreateVehicleDto {
   year: number;
 
   @IsString()
+  @Type(() => String)
   @Length(3, 255)
   @ApiProperty({
     description: 'The engine type of the vehicle',
@@ -63,6 +71,7 @@ export class CreateVehicleDto {
   @IsEnum(['Automatic', 'Manual', 'Semi-Automatic'], {
     message: 'Transmission type must be Automatic, Manual or Semi-Automatic',
   })
+  @Type(() => String)
   @ApiProperty({
     description: 'The transmission type of the vehicle',
     example: 'Automatic',
@@ -71,6 +80,7 @@ export class CreateVehicleDto {
   transmissionType: string;
 
   @IsNumber()
+  @Type(() => Number)
   @Min(0)
   @ApiProperty({
     description: 'The mileage of the vehicle',
@@ -79,6 +89,7 @@ export class CreateVehicleDto {
   mileage: number;
 
   @IsNumber()
+  @Type(() => Number)
   @Min(0)
   @ApiProperty({
     description: 'The price per hour for renting the vehicle',
@@ -86,10 +97,6 @@ export class CreateVehicleDto {
   })
   pricePerHour: number;
 
-  @IsString()
-  @ApiProperty({
-    description: 'The URL of the vehicle photo',
-    example: 'http://example.com/photo.jpg',
-  })
-  photo: string;
+  @ApiProperty({ type:'string', format:'binary' })
+  file: Express.Multer.File;
 }
