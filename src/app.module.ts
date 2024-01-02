@@ -12,6 +12,7 @@ import { join } from 'path';
 
 import { Vehicle } from './vehicles/entities/vehicle.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RentalrequestModule } from './rentalrequest/rentalrequest.module';
 
 
 
@@ -22,12 +23,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     DatabaseModule,
     UsersModule,
     AuthModule,
+    RentalrequestModule,
     VehiclesModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'uploads'),
       serveRoot: '/images/',
     }),
-
     TypeOrmModule.forFeature([Vehicle]),
     
 
