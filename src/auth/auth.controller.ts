@@ -12,10 +12,11 @@ import { Public } from "./public.decorator";
 import { AuthGuard } from "./auth.guard";
 import { LoginDto } from "./dto/login.dto";
 import { LoginResponseDTo } from "./dto/login-response.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 
   
-
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(

@@ -6,10 +6,9 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('CarShare360')
+    .setDescription('The CarShare360 API description')
     .setVersion('1.0')
-    .addTag('cats')
     .build();
 
   app.setGlobalPrefix('api/v1');

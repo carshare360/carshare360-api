@@ -18,8 +18,8 @@ import { RentalrequestModule } from './rentalrequest/rentalrequest.module';
     DatabaseModule,
     UsersModule,
     AuthModule,
-    TypeOrmModule.forFeature([Vehicle]),
     RentalrequestModule,
+    TypeOrmModule.forFeature([Vehicle]),
     
   ],
   controllers: [AppController],
