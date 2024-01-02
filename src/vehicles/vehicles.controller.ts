@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/auth/public.decorator';
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { SearchVehicleDto } from './dto/search-vehicle.dto';
@@ -14,11 +15,13 @@ export class VehicleController {
   @Post()
   @Public()
   @ApiOperation({ summary: 'Create a new vehicle' })
+  @ApiConsumes('multipart/form-data')
   @ApiResponse({ status: 201, description: 'The vehicle has been successfully created.'})
   @ApiResponse({ status: 400, description: 'Bad request.' })
   @HttpCode(201)
-  create(@Body() createVehicleDto: CreateVehicleDto) {
-    return this.vehicleService.create(createVehicleDto);
+  @UseInterceptors(FileInterceptor('file'))
+  create(@UploadedFile() image: Express.Multer.File, @Body() createVehicleDto: CreateVehicleDto) {
+    return this.vehicleService.create(image, createVehicleDto);
   }
 
   @Post('multi')
