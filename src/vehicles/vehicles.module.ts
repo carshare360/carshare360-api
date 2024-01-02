@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Vehicle } from './entities/vehicle.entity';
 import { MulterModule } from '@nestjs/platform-express';
 
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([Vehicle]),
@@ -12,5 +13,6 @@ import { MulterModule } from '@nestjs/platform-express';
   ],
   controllers: [VehicleController],
   providers: [VehicleService],
+  
 })
 export class VehiclesModule {}

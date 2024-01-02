@@ -17,6 +17,12 @@ export class User {
     @Column()
     lastName: string;
 
+    @Column({nullable: true})
+    phoneNumber: string;
+
+    @Column({nullable: true})
+    about: string;
+
     @Column({type: 'enum', enum: Role, default: Role.User})
     roles: Role[];
 }

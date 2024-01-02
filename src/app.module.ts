@@ -6,13 +6,19 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
+
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+
+import { Vehicle } from './vehicles/entities/vehicle.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    VehiclesModule,
     DatabaseModule,
     UsersModule,
     AuthModule,
@@ -21,6 +27,9 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', '..', 'uploads'),
       serveRoot: '/images/',
     }),
+
+    TypeOrmModule.forFeature([Vehicle]),
+    
 
   ],
   controllers: [AppController],

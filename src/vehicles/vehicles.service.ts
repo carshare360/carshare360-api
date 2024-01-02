@@ -91,4 +91,18 @@ export class VehicleService {
       ],
     };
   }
+
+
+  multiCreate(createCarDto: CreateVehicleDto[]): Promise<Vehicle[]> {
+    const cars = createCarDto.map((carDto) => {
+      const car = this.vehicleRepository.create(carDto);
+      car.isAvailable = true;
+      car.location = {
+        type: 'Point',
+        coordinates: [carDto.longitude, carDto.latitude],
+      };
+      return car;
+    });
+    return this.vehicleRepository.save(cars);
+  }
 }

@@ -11,6 +11,24 @@ export class CreateVehicleDto {
   })
   ownerId: number;
 
+  @IsString()
+  @Length(3, 255)
+  @ApiProperty({
+    description: 'The title of the vehicle',
+    example: 'My Car',
+  })
+  title: string;
+
+
+  @IsString()
+  @Length(3, 255)
+  @ApiProperty({
+    description: 'The description of the vehicle',
+    example: 'My Car',
+  })
+  description: string;
+  
+
   @IsNumber()
   @Type(() => Number)
   @Min(-90)
@@ -97,6 +115,17 @@ export class CreateVehicleDto {
   })
   pricePerHour: number;
 
+
   @ApiProperty({ type:'string', format:'binary' })
   file: Express.Multer.File;
+
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  @ApiProperty({
+    description: 'The rent per hour of the vehicle',
+    example: '10',
+  })
+  rentPerHour: number;
+
 }
