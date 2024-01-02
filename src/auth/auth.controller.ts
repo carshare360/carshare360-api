@@ -128,4 +128,27 @@ export class AuthController {
   async getProfile(@CurrentUser() user: User) {
     return user;
   }
+
+
+  @Post('add-blacklist')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  async addBlacklistByEmail(@Body() body: { email: string }) {
+    const user = await this.userRepository.findOne({
+      where: [
+        { email: body.email }
+      ]
+    });
+
+    if (!user) {
+      throw new BadRequestException(['Email not found']);
+    }
+
+    user.blacklisted = true;
+    await this.userRepository.save(user);
+
+    return {
+      message: 'User blacklisted'
+    }
+  }
 }

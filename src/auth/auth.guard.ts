@@ -21,7 +21,6 @@ import { Reflector } from '@nestjs/core';
       if (isPublic) {
         return true;
       }
-
       
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
@@ -35,6 +34,10 @@ import { Reflector } from '@nestjs/core';
             secret: process.env.AUTH_SECRET,
           }
         );
+        if(payload.blackListed) {
+          throw new UnauthorizedException();
+        }
+
         request['user'] = payload;
       } catch {
         throw new UnauthorizedException();
