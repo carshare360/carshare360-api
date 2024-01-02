@@ -47,6 +47,7 @@ export class CreateUserDto {
 
   @MinLength(10)
   @MaxLength(300)
+  @IsOptional()
   @ApiProperty({
     description: 'The about of the user',
     example: 'I am a student at ITU',
