@@ -17,10 +17,10 @@ export class User {
     @Column()
     lastName: string;
 
-    @Column()
+    @Column({nullable: true})
     phoneNumber: string;
 
-    @Column()
+    @Column({nullable: true})
     about: string;
 
     @Column({type: 'enum', enum: Role, default: Role.User})
