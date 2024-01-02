@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { Vehicle } from './vehicles/entities/vehicle.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RentalrequestModule } from './rentalrequest/rentalrequest.module';
 
 
 @Module({
@@ -18,6 +19,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     UsersModule,
     AuthModule,
     TypeOrmModule.forFeature([Vehicle]),
+    RentalrequestModule,
     
   ],
   controllers: [AppController],
