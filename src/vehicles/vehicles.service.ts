@@ -6,6 +6,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Polygon, Repository } from 'typeorm';
 import { Vehicle } from './entities/vehicle.entity';
 import { LatLng, SearchVehicleDto } from './dto/search-vehicle.dto';
+import { randomUUID } from 'crypto';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class VehicleService {
@@ -14,13 +17,15 @@ export class VehicleService {
     private vehicleRepository: Repository<Vehicle>,
   ) {}
 
-  create(createCarDto: CreateVehicleDto): Promise<Vehicle> {
+  create(image: Express.Multer.File, createCarDto: CreateVehicleDto): Promise<Vehicle> {
     const car = this.vehicleRepository.create(createCarDto);
     car.isAvailable = true;
     car.location = {
       type: 'Point',
       coordinates: [createCarDto.longitude, createCarDto.latitude],
     };
+    car.photo = randomUUID() + '.jpg';
+    writeFileSync(join(__dirname, '..', '..', '..', 'uploads', car.photo), image.buffer);
     return this.vehicleRepository.save(car);
   }
 
