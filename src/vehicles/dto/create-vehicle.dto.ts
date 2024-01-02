@@ -9,6 +9,24 @@ export class CreateVehicleDto {
   })
   ownerId: number;
 
+  @IsString()
+  @Length(3, 255)
+  @ApiProperty({
+    description: 'The title of the vehicle',
+    example: 'My Car',
+  })
+  title: string;
+
+
+  @IsString()
+  @Length(3, 255)
+  @ApiProperty({
+    description: 'The description of the vehicle',
+    example: 'My Car',
+  })
+  description: string;
+  
+
   @IsNumber()
   @Min(-90)
   @Max(90)
@@ -92,4 +110,13 @@ export class CreateVehicleDto {
     example: 'http://example.com/photo.jpg',
   })
   photo: string;
+
+  @IsNumber()
+  @Min(0)
+  @ApiProperty({
+    description: 'The rent per hour of the vehicle',
+    example: '10',
+  })
+  rentPerHour: number;
+
 }

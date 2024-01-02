@@ -6,6 +6,12 @@ export class Vehicle {
   id: number;
 
   @Column()
+  title: string;
+
+  @Column()
+  description: string;
+
+  @Column()
   ownerId: number;
 
   @Column({
@@ -41,6 +47,9 @@ export class Vehicle {
 
   @Column()
   photo: string;
+
+  @Column()
+  rentPerHour: number;
 
   @Column({ default: true })
   isAvailable: boolean;
