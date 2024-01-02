@@ -21,6 +21,17 @@ export class VehicleController {
     return this.vehicleService.create(createVehicleDto);
   }
 
+  @Post('multi')
+  @Public()
+  @ApiOperation({ summary: 'Create multiple vehicles' })
+  @ApiResponse({ status: 201, description: 'The vehicles have been successfully created.'})
+  @ApiResponse({ status: 400, description: 'Bad request.' })
+  @HttpCode(201)
+  multiCreate(@Body() createVehicleDto: CreateVehicleDto[]) {
+    return this.vehicleService.multiCreate(createVehicleDto);
+  }
+
+
   @Get()
   @Public()
   @ApiOperation({ summary: 'Get all vehicles' })

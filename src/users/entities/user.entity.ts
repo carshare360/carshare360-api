@@ -17,6 +17,12 @@ export class User {
     @Column()
     lastName: string;
 
+    @Column()
+    phoneNumber: string;
+
+    @Column()
+    about: string;
+
     @Column({type: 'enum', enum: Role, default: Role.User})
     roles: Role[];
 }
