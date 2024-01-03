@@ -1,6 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Status } from '../dto/status.enum';
 
 
 @Entity()
