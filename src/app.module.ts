@@ -13,6 +13,7 @@ import { join } from 'path';
 import { Vehicle } from './vehicles/entities/vehicle.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RentalrequestModule } from './rentalrequest/rentalrequest.module';
+import { AlertsModule } from './alerts/alerts.module';
 
 
 
@@ -25,6 +26,7 @@ import { RentalrequestModule } from './rentalrequest/rentalrequest.module';
     AuthModule,
     RentalrequestModule,
     VehiclesModule,
+    AlertsModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'uploads'),
       serveRoot: '/images/',
