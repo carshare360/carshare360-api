@@ -43,4 +43,9 @@ export class UsersController {
   getAlerts(@CurrentUser() user: any) {
     return this.usersService.getAlerts(+user.sub);
   }
+
+  @Delete('delete/alerts')
+  deleteAlerts(@CurrentUser() user: any) {
+    return this.usersService.deleteAlerts(+user.sub);
+  }
 }
