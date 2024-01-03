@@ -15,7 +15,7 @@ export class Rentalrequest {
   @ManyToOne(() => Vehicle)
   vehicle: Vehicle;
 
-  @Column({ type: 'enum', enum: [Status.Approved, Status.Pending, Status.Rejected], default: Status.Pending })
+  @Column({ type: 'enum', enum: [Status.Approved, Status.Pending, Status.Rejected, Status.Canceled], default: Status.Pending })
   status: Status;
 
   startDate: Date;
