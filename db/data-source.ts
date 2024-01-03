@@ -16,6 +16,12 @@ export const dataSourceOptions: DataSourceOptions = {
   entities: [`${__dirname}/../src/**/*.entity{.ts,.js}`],
   synchronize: configService.getOrThrow('POSTGRE_SYNCHRONIZE'),
   logging: configService.getOrThrow('POSTGRE_LOGGING'),
+  ssl: configService.getOrThrow('POSTGRE_SSL'),
+  extra: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
   migrations: [`${__dirname}/migrations/*{.ts,.js}`],
   migrationsTableName: 'migrations',
 };
