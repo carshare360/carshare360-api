@@ -59,4 +59,8 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
+  async getAlerts(id: number) {
+    return (await this.userRepository.findOne({where: {id: id}, relations: ['alerts']})).alerts;
+  }
 }

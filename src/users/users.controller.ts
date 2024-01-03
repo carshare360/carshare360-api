@@ -38,4 +38,9 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
+
+  @Get('get/alerts')
+  getAlerts(@CurrentUser() user: any) {
+    return this.usersService.getAlerts(+user.sub);
+  }
 }
