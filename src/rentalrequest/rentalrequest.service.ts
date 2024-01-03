@@ -6,6 +6,8 @@ import { Rentalrequest } from './entities/rentalrequest.entity';
 import { Repository } from 'typeorm';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Status } from './dto/status.enum';
 
 @Injectable()
 export class RentalrequestService {
@@ -13,7 +15,9 @@ export class RentalrequestService {
 
   constructor(
     @InjectRepository(Rentalrequest)
-    private rentalrequestRepository: Repository<Rentalrequest>,    
+    private rentalrequestRepository: Repository<Rentalrequest>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     
   ) {}
 
@@ -42,13 +46,60 @@ export class RentalrequestService {
   accept(rentalRequestId: number) {
     this.rentalrequestRepository.findOne({ where: { id: rentalRequestId }, relations: ['vehicle'] }).then((rentalrequest) => {
       this.rentalrequestRepository.update({ vehicle: { id: rentalrequest.vehicle.id  }  }, { status: Status.Canceled }); 
+
+      this.rentalrequestRepository.find({ where: { vehicle: { id: rentalrequest.vehicle.id } }, relations: ['user'] }).then((rentalrequests) => {
+        rentalrequests.forEach((rentalrequest) => {
+          //notify other renters
+          if(rentalrequest.id == rentalRequestId){
+            rentalrequest.user.alerts.push({
+              id: 0, // Add the 'id' property with a default value
+              description: 'Your rental request has been accepted',
+              rentalrequest: rentalrequest,
+              status: Status.Approved,
+              user: rentalrequest.user
+            });
+          } 
+          else {
+            rentalrequest.user.alerts.push({
+              id: 0, // Add the 'id' property with a default value
+              description: 'Your rental request has been rejected',
+              rentalrequest: rentalrequest,
+              status: Status.Rejected,
+              user: rentalrequest.user
+            });
+          }
+        });
+
+        //notify owner
+        this.userRepository.findOne({ where: { id: rentalrequest.vehicle.ownerId } }).then((owner) => {
+          owner.alerts.push({
+            id: 0, // Add the 'id' property with a default value
+            description: 'You approved a rental request',
+            rentalrequest: rentalrequest,
+            status: Status.Approved,
+            user: owner
+          });
+          this.userRepository.save(owner);
+        });
+      });
+
       rentalrequest.status = Status.Approved;
-      this.rentalrequestRepository.save(rentalrequest);
+      this.rentalrequestRepository.save(rentalrequest);      
     });
   }
 
   reject(rentalRequestId: number) {
     this.rentalrequestRepository.update({ id: rentalRequestId } , { status: Status.Rejected });  
+    this.rentalrequestRepository.findOne({where: {id: rentalRequestId}, relations: ['user']}).then((rentalrequest) => {
+      rentalrequest.user.alerts.push({
+        id: 0, // Add the 'id' property with a default value
+        description: 'Your rental request has been rejected',
+        rentalrequest: rentalrequest,
+        status: Status.Rejected,
+        user: rentalrequest.user
+      });
+      this.userRepository.save(rentalrequest.user);
+    });
   }
 
 
