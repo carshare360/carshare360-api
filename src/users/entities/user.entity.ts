@@ -1,6 +1,7 @@
 import { Role } from "src/auth/role.enum";
 import { Alert } from "src/alerts/entities/alert.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Exclude } from "class-transformer";
 
 @Entity()
 export class User {
@@ -9,7 +10,9 @@ export class User {
 
     @Column({unique: true})
     email: string;
-    @Column({select: false})
+
+    @Column()
+    @Exclude()
     password: string;
     
     @Column()
