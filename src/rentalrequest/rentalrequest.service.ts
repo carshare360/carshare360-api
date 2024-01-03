@@ -43,6 +43,7 @@ export class RentalrequestService {
     this.rentalrequestRepository.findOne({ where: { id: rentalRequestId }, relations: ['vehicle'] }).then((rentalrequest) => {
       this.rentalrequestRepository.update({ vehicle: { id: rentalrequest.vehicle.id  }  }, { status: Status.Canceled }); 
       rentalrequest.status = Status.Approved;
+      this.rentalrequestRepository.save(rentalrequest);
     });
   }
 
