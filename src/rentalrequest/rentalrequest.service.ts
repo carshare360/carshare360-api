@@ -6,6 +6,9 @@ import { Rentalrequest } from './entities/rentalrequest.entity';
 import { Repository } from 'typeorm';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { Vehicle } from 'src/vehicles/entities/vehicle.entity';
+import { User } from 'src/users/entities/user.entity';
+import { Status } from './dto/status.enum';
+import { Alert } from 'src/alerts/entities/alert.entity';
 
 @Injectable()
 export class RentalrequestService {
@@ -13,7 +16,11 @@ export class RentalrequestService {
 
   constructor(
     @InjectRepository(Rentalrequest)
-    private rentalrequestRepository: Repository<Rentalrequest>,    
+    private rentalrequestRepository: Repository<Rentalrequest>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Alert)
+    private alertRepository: Repository<Alert>,
     
   ) {}
 
@@ -36,19 +43,78 @@ export class RentalrequestService {
       vehicle: { id: createRentalrequestDto.vehicleId },
       user: { id: userId },
     });
-    return this.rentalrequestRepository.save(rentalrequest);
+    await this.rentalrequestRepository.save(rentalrequest);
+    
+    const ownerId = rentalrequest.vehicle.ownerId;
+    const owner = await this.userRepository.findOne({ where: { id: ownerId } });
+
+    const alert = this.alertRepository.create({
+      description: 'You have a new rental request',
+      rentalrequest: {id: rentalrequest.id},
+      status: Status.Pending,
+      user: {id: owner.id},
+    });
+    
+    await this.alertRepository.save(alert);
+    return rentalrequest;
   }
 
   accept(rentalRequestId: number) {
     this.rentalrequestRepository.findOne({ where: { id: rentalRequestId }, relations: ['vehicle'] }).then((rentalrequest) => {
       this.rentalrequestRepository.update({ vehicle: { id: rentalrequest.vehicle.id  }  }, { status: Status.Canceled }); 
+
+      this.rentalrequestRepository.find({ where: { vehicle: { id: rentalrequest.vehicle.id } }, relations: ['user'] }).then((rentalrequests) => {
+        rentalrequests.forEach((rentalrequest) => {          
+          //notify other renters
+          if(rentalrequest.id == rentalRequestId){
+            const alert = this.alertRepository.create({
+              description: 'Your rental request has been accepted',
+              rentalrequest: rentalrequest,
+              status: Status.Approved,
+              user: rentalrequest.user
+            });
+            this.alertRepository.save(alert);
+          } 
+          else {
+            const alert = this.alertRepository.create({
+              description: 'Your rental request has been rejected',
+              rentalrequest: rentalrequest,
+              status: Status.Rejected,
+              user: rentalrequest.user
+            });
+            this.alertRepository.save(alert);
+          }
+        });
+
+        //notify owner
+        this.userRepository.findOne({ where: { id: rentalrequest.vehicle.ownerId } }).then((owner) => {
+          const alert = this.alertRepository.create({
+            description: 'You approved a rental request',
+            rentalrequest: rentalrequest,
+            status: Status.Approved,
+            user: owner
+          })
+          this.alertRepository.save(alert);
+        });
+      });
+
       rentalrequest.status = Status.Approved;
-      this.rentalrequestRepository.save(rentalrequest);
+      this.rentalrequestRepository.save(rentalrequest);      
     });
   }
 
   reject(rentalRequestId: number) {
     this.rentalrequestRepository.update({ id: rentalRequestId } , { status: Status.Rejected });  
+    this.rentalrequestRepository.findOne({where: {id: rentalRequestId}, relations: ['user']}).then((rentalrequest) => {
+      rentalrequest.user.alerts.push({
+        id: 0, // Add the 'id' property with a default value
+        description: 'Your rental request has been rejected',
+        rentalrequest: rentalrequest,
+        status: Status.Rejected,
+        user: rentalrequest.user
+      });
+      this.userRepository.save(rentalrequest.user);
+    });
   }
 
 
