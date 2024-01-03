@@ -4,12 +4,15 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { Alert } from 'src/alerts/entities/alert.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Alert)
+    private alertRepository: Repository<Alert>,
   ) {}
 
   create(createUserDto: CreateUserDto) {
@@ -58,5 +61,14 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getAlerts(id: number) {
+    return (await this.userRepository.findOne({where: {id: id}, relations: ['alerts']})).alerts;
+  }
+
+  async deleteAlerts(id: number) {
+    const user = await this.userRepository.findOne({where: {id: id}, relations: ['alerts']});
+    this.alertRepository.remove(user.alerts);
   }
 }
