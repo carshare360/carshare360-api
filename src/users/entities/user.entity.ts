@@ -1,5 +1,6 @@
 import { Role } from "src/auth/role.enum";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Alert } from "src/alerts/entities/alert.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -28,4 +29,7 @@ export class User {
 
     @Column({nullable: true, default: false})
     blacklisted: boolean;
+
+    @OneToMany(() => Alert, alert => alert.user)
+    alerts: Alert[];
 }
