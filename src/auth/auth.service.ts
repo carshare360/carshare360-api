@@ -16,7 +16,7 @@ export class AuthService {
     return this.jwtService.sign({
       email: user.email,
       sub: user.id,
-      roles: Role.User,
+      roles: user.roles.includes(Role.Admin) ? Role.Admin : Role.User,
       blackListed: user.blacklisted
     });
   }
