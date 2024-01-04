@@ -18,10 +18,13 @@ export class Rentalrequest {
   @Column({ type: 'enum', enum: [Status.Approved, Status.Pending, Status.Rejected, Status.Canceled], default: Status.Pending })
   status: Status;
 
+  @Column({nullable: true})
   startDate: Date;
 
+  @Column({nullable: true})
   endDate: Date;
 
+  @Column({nullable: true})
   description: string;
 
 }
