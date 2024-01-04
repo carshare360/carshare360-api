@@ -98,8 +98,7 @@ export class RentalrequestService {
         });
       });
 
-      rentalrequest.status = Status.Approved;
-      this.rentalrequestRepository.save(rentalrequest);      
+      this.rentalrequestRepository.update({ id: rentalRequestId } , { status: Status.Approved });      
     });
   }
 
