@@ -106,14 +106,13 @@ export class RentalrequestService {
   reject(rentalRequestId: number) {
     this.rentalrequestRepository.update({ id: rentalRequestId } , { status: Status.Rejected });  
     this.rentalrequestRepository.findOne({where: {id: rentalRequestId}, relations: ['user']}).then((rentalrequest) => {
-      rentalrequest.user.alerts.push({
-        id: 0, // Add the 'id' property with a default value
+      const alert = this.alertRepository.create({
         description: 'Your rental request has been rejected',
         rentalrequest: rentalrequest,
         status: Status.Rejected,
         user: rentalrequest.user
       });
-      this.userRepository.save(rentalrequest.user);
+      this.alertRepository.save(alert);
     });
   }
 
