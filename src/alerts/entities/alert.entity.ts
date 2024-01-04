@@ -21,4 +21,7 @@ export class Alert {
   @ManyToOne(() => Rentalrequest)
   @JoinColumn({ name: 'rentalrequest_id' })
   rentalrequest: Rentalrequest;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }
