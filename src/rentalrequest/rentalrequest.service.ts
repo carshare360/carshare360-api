@@ -26,12 +26,12 @@ export class RentalrequestService {
 
   async getMyAdRequest(userId: number): Promise<Rentalrequest[]> {
     this.logger.log('Retrieving rental requests for user ' + userId);
-    return this.rentalrequestRepository.find({ where: { vehicle: { ownerId: userId } }, relations: ['vehicle'] });
+    return this.rentalrequestRepository.find({ where: { vehicle: { ownerId: userId } }, relations: ['vehicle', 'user'] });
   }
 
   async getMyRequest(userId: number): Promise<Rentalrequest[]> {
     this.logger.log('Retrieving rental requests for user ' + userId);
-    return this.rentalrequestRepository.find({ where: { user: { id: userId } }, relations: ['vehicle'] });
+    return this.rentalrequestRepository.find({ where: { user: { id: userId } }, relations: ['vehicle', 'user'] });
   }
 
   async create(userId: number, createRentalrequestDto: CreateRentalrequestDto) {
