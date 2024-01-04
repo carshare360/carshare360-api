@@ -64,7 +64,7 @@ export class UsersService {
   }
 
   async getAlerts(id: number) {
-    return (await this.userRepository.findOne({where: {id: id}, relations: ['alerts']})).alerts;
+    return (await this.userRepository.findOne({where: {id: id}, relations: ['alerts', 'alerts.rentalrequest', 'alerts.rentalrequest.vehicle']})).alerts;
   }
 
   async deleteAlerts(id: number) {
